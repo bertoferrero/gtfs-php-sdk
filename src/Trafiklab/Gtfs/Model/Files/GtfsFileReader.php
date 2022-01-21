@@ -65,12 +65,12 @@ class GtfsFileReader
      *
      * @return array
      */
-    public function getAllDataRows(): array
+    public function getAllDataRows(bool $plainData = false): array
     {
         return GtfsParserUtil::deserializeCSV(
             $this->gtfsArchive,
             $this->filePath,
-            $this->dataModelClass
+            (!$plainData ? $this->dataModelClass : null)
         );
     }
 }
