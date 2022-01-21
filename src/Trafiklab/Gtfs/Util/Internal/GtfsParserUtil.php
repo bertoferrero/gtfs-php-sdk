@@ -25,7 +25,7 @@ class GtfsParserUtil
     public static function deserializeCSV(
         GtfsArchive $gtfsArchive,
         string $csvPath,
-        string $dataModelClass,
+        string $dataModelClass = null,
         $indexField = null
     ): array {
         // Open the CSV file and read it into an associative array
@@ -45,10 +45,11 @@ class GtfsParserUtil
                 foreach ($row as $k => $value) {
                     $rowData[$fieldNames[$k]] = $value;
                 }
+                $row = ($dataModelClass != null ? new $dataModelClass($gtfsArchive, $rowData): $rowData);
                 if ($indexField == null) {
-                    $resultingObjects[] = new $dataModelClass($gtfsArchive, $rowData);
+                    $resultingObjects[] = $row;
                 } else {
-                    $resultingObjects[$rowData[$indexField]] = new $dataModelClass($gtfsArchive, $rowData);
+                    $resultingObjects[$rowData[$indexField]] = $row;
                 }
             }
             if (!feof($handle)) {
