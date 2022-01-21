@@ -5,19 +5,31 @@ namespace Trafiklab\Gtfs\Model;
 
 
 use Exception;
+use ZipArchive;
+use Trafiklab\Gtfs\Model\Entities\Stop;
+use Trafiklab\Gtfs\Model\Entities\Trip;
+use Trafiklab\Gtfs\Model\Entities\Route;
+use Trafiklab\Gtfs\Model\Entities\Agency;
+use Trafiklab\Gtfs\Model\Entities\FeedInfo;
+use Trafiklab\Gtfs\Model\Entities\StopTime;
+use Trafiklab\Gtfs\Model\Entities\Transfer;
+use Trafiklab\Gtfs\Model\Entities\Frequency;
+use Trafiklab\Gtfs\Util\Internal\ArrayCache;
+use Trafiklab\Gtfs\Model\Entities\ShapePoint;
+use Trafiklab\Gtfs\Model\Files\GtfsStopsFile;
+use Trafiklab\Gtfs\Model\Files\GtfsTripsFile;
 use Trafiklab\Gtfs\Model\Files\GtfsAgencyFile;
-use Trafiklab\Gtfs\Model\Files\GtfsCalendarDatesFile;
-use Trafiklab\Gtfs\Model\Files\GtfsCalendarFile;
-use Trafiklab\Gtfs\Model\Files\GtfsFeedInfoFile;
-use Trafiklab\Gtfs\Model\Files\GtfsFrequenciesFile;
+use Trafiklab\Gtfs\Model\Files\GtfsFileReader;
 use Trafiklab\Gtfs\Model\Files\GtfsRoutesFile;
 use Trafiklab\Gtfs\Model\Files\GtfsShapesFile;
-use Trafiklab\Gtfs\Model\Files\GtfsStopsFile;
+use Trafiklab\Gtfs\Model\Entities\CalendarDate;
+use Trafiklab\Gtfs\Model\Entities\CalendarEntry;
+use Trafiklab\Gtfs\Model\Files\GtfsCalendarFile;
+use Trafiklab\Gtfs\Model\Files\GtfsFeedInfoFile;
 use Trafiklab\Gtfs\Model\Files\GtfsStopTimesFile;
 use Trafiklab\Gtfs\Model\Files\GtfsTransfersFile;
-use Trafiklab\Gtfs\Model\Files\GtfsTripsFile;
-use Trafiklab\Gtfs\Util\Internal\ArrayCache;
-use ZipArchive;
+use Trafiklab\Gtfs\Model\Files\GtfsFrequenciesFile;
+use Trafiklab\Gtfs\Model\Files\GtfsCalendarDatesFile;
 
 class GtfsArchive
 {
@@ -116,91 +128,91 @@ class GtfsArchive
     }
 
     /**
-     * @return GtfsAgencyFile
+     * @return GtfsFileReader
      */
-    public function getAgencyFile(): GtfsAgencyFile
+    public function getAgencyFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::AGENCY_TXT, GtfsAgencyFile::class);
+        return $this->loadGtfsFileThroughReader(self::AGENCY_TXT, Agency::class);
     }
 
     /**
-     * @return GtfsCalendarDatesFile
+     * @return GtfsFileReader
      */
-    public function getCalendarDatesFile(): GtfsCalendarDatesFile
+    public function getCalendarDatesFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::CALENDAR_DATES_TXT, GtfsCalendarDatesFile::class);
+        return $this->loadGtfsFileThroughReader(self::CALENDAR_DATES_TXT, CalendarDate::class);
     }
 
     /**
-     * @return GtfsCalendarFile
+     * @return GtfsFileReader
      */
-    public function getCalendarFile(): GtfsCalendarFile
+    public function getCalendarFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::CALENDAR_TXT, GtfsCalendarFile::class);
+        return $this->loadGtfsFileThroughReader(self::CALENDAR_TXT, CalendarEntry::class);
     }
 
     /**
-     * @return GtfsFeedInfoFile
+     * @return GtfsFileReader
      */
-    public function getFeedInfoFile(): GtfsFeedInfoFile
+    public function getFeedInfoFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::FEED_INFO_TXT, GtfsFeedInfoFile::class);
+        return $this->loadGtfsFileThroughReader(self::FEED_INFO_TXT, FeedInfo::class);
     }
 
     /**
-     * @return GtfsRoutesFile
+     * @return GtfsFileReader
      */
-    public function getRoutesFile(): GtfsRoutesFile
+    public function getRoutesFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::ROUTES_TXT, GtfsRoutesFile::class);
+        return $this->loadGtfsFileThroughReader(self::ROUTES_TXT, Route::class);
     }
 
     /**
-     * @return GtfsShapesFile
+     * @return GtfsFileReader
      */
-    public function getShapesFile(): GtfsShapesFile
+    public function getShapesFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::SHAPES_TXT, GtfsShapesFile::class);
+        return $this->loadGtfsFileThroughReader(self::SHAPES_TXT, ShapePoint::class);
     }
 
     /**
-     * @return GtfsStopsFile
+     * @return GtfsFileReader
      */
-    public function getStopsFile(): GtfsStopsFile
+    public function getStopsFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::STOPS_TXT, GtfsStopsFile::class);
+        return $this->loadGtfsFileThroughReader(self::STOPS_TXT, Stop::class);
     }
 
     /**
-     * @return GtfsStopTimesFile
+     * @return GtfsFileReader
      */
-    public function getStopTimesFile(): GtfsStopTimesFile
+    public function getStopTimesFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::STOP_TIMES_TXT, GtfsStopTimesFile::class);
+        return $this->loadGtfsFileThroughReader(self::STOP_TIMES_TXT, StopTime::class);
     }
 
     /**
-     * @return GtfsTransfersFile
+     * @return GtfsFileReader
      */
-    public function getTransfersFile(): GtfsTransfersFile
+    public function getTransfersFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::TRANSFERS_TXT, GtfsTransfersFile::class);
+        return $this->loadGtfsFileThroughReader(self::TRANSFERS_TXT, Transfer::class);
     }
 
     /**
-     * @return GtfsTripsFile
+     * @return GtfsFileReader
      */
-    public function getTripsFile(): GtfsTripsFile
+    public function getTripsFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::TRIPS_TXT, GtfsTripsFile::class);
+        return $this->loadGtfsFileThroughReader(self::TRIPS_TXT, Trip::class);
     }
 
     /**
-     * @return GtfsFrequenciesFile
+     * @return GtfsFileReader
      */
-    public function getFrequenciesFile(): GtfsFrequenciesFile
+    public function getFrequenciesFile(): GtfsFileReader
     {
-        return $this->loadGtfsFileThroughCache(__METHOD__, self::FREQUENCIES_TXT, GtfsFrequenciesFile::class);
+        return $this->loadGtfsFileThroughReader(self::FREQUENCIES_TXT, Frequency::class);
     }
 
     /**
@@ -224,11 +236,8 @@ class GtfsArchive
         rmdir($this->fileRoot);
     }
 
-    private function loadGtfsFileThroughCache(string $method, string $file, string $class)
+    private function loadGtfsFileThroughReader(string $file, string $class)
     {
-        if ($this->getCachedResult($method) == null) {
-            $this->setCachedResult($method, new $class($this, $this->fileRoot . $file));
-        }
-        return $this->getCachedResult($method);
+        return new GtfsFileReader($this, $this->fileRoot . $file, $class);
     }
 }
