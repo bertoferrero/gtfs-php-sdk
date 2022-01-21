@@ -22,9 +22,12 @@ class GtfsParserUtil
      *
      * @return array the deserialized data
      */
-    public static function deserializeCSV(GtfsArchive $gtfsArchive, string $csvPath,
-                                          string $dataModelClass, $indexField = null): array
-    {
+    public static function deserializeCSV(
+        GtfsArchive $gtfsArchive,
+        string $csvPath,
+        string $dataModelClass,
+        $indexField = null
+    ): array {
         // Open the CSV file and read it into an associative array
         $resultingObjects = $fieldNames = [];
 
@@ -56,6 +59,26 @@ class GtfsParserUtil
         return $resultingObjects;
     }
 
+    public static function initCSVHandle(string $csvPath, array &$fieldNames)
+    {
+        // Open the CSV file and read it into an associative array
+        $resultingObjects = $fieldNames = [];
+
+        $handle = self::openFile($csvPath);
+        if ($handle) {
+            while (($row = fgetcsv($handle)) !== false) {
+                $row = array_map('trim', $row);
+                // Read the header row
+                $fieldNames = $row;
+                //Return the handle
+                return $handle;
+            }
+            if (!feof($handle)) {
+                throw new RuntimeException("Failed to read data from file");
+            }
+        }
+    }
+
     /**
      * This is a modified version of deserializeCSV, in order to optimize the speed when handling shapes
      *
@@ -63,9 +86,13 @@ class GtfsParserUtil
      *
      * @return array the deserialized data, sorted by shape_id.
      */
-    public static function deserializeCSVWithCompositeIndex(GtfsArchive $gtfsArchive, string $csvPath,
-                                                           string $dataModelClass, $firstIndexField, $secondIndexField): array
-    {
+    public static function deserializeCSVWithCompositeIndex(
+        GtfsArchive $gtfsArchive,
+        string $csvPath,
+        string $dataModelClass,
+        $firstIndexField,
+        $secondIndexField
+    ): array {
         // Open the CSV file and read it into an associative array
         $resultingObjects = $fieldNames = [];
 
@@ -110,5 +137,4 @@ class GtfsParserUtil
         }
         return $handle;
     }
-
 }
