@@ -46,6 +46,9 @@ class GtfsFileReader
     public function next(): mixed
     {
         $this->initHandle();
+        if($this->fileDataHandle === null){
+            return false;
+        }
         $row = fgetcsv($this->fileDataHandle);
         if ($row === false) {
             $this->closeHandle();
